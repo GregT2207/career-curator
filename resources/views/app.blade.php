@@ -14,7 +14,7 @@
         @vite('resources/css/app.css')
     </head>
 
-    <body>
+    <body class="text-white bg-black">
         <div id='app'></div>
 
         {{-- Scripts --}}

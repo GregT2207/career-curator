@@ -1,6 +1,0 @@
-Backend:
-    ChatGPT travel and level analysis
-    Scrapers for other sites
-
-Frontend:
-    Everything
