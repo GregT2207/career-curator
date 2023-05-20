@@ -9,10 +9,10 @@ class Listing
     public $travel; // global, national, home, quarterly, monthly, weekly, 2 days, 3 days, 4 days, 5 days
 
     public function __construct(
-        public $site, 
-        public $link, 
-        public $title, 
-        public $description, 
+        public $site,
+        public $link,
+        public $title,
+        public $description,
         public $salaryRange,
     ) {
         $this->salary = $this->getAverageSalary();
