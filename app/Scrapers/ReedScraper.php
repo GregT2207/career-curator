@@ -4,39 +4,39 @@ namespace App\Scrapers;
 
 use Illuminate\Support\Facades\Http;
 
-class ReedScraper
+class ReedScraper extends Scraper implements GetsListings
 {
-    protected $searchTerm;
+    protected $baseUrl = 'https://reed.co.uk';
     protected $html;
 
-    public function __construct($searchTerm)
+    public function __construct()
     {
-        $this->searchTerm = $searchTerm;
+        $this->searchUrl = "https://reed.co.uk/jobs/{$this->searchTerm}-jobs";
     }
 
     public function getListingLinks(): array
     {
-        $response = Http::withHeaders([
-            'User-Agent' => 'Career-Curator/v1.0',
-            'Accept' => 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8',
-            'Accept-Encoding' => 'gzip, deflate, br',
-        ])->get("https://www.reed.co.uk/jobs/{$this->searchTerm}-jobs", [
-            'allow_redirects' => false,
-        ]);
+        $links = [];
 
-        if ($response->successful()) {
-            $dom = new \DOMDocument();
-            $dom->loadHTML($response->body());
-
-            $xPath = new \DOMXPath($dom);
+        $xPath = $this->getSearchResultsXPath();
+        if ($xPath) {
             $jobCards = $xPath->query("//*[@data-qa='job-card-title']");
-            
-            $links = [];
-            foreach ($jobCards as $jobCard) {
-                $links[] = $jobCard->getAttribute('href');
-            }
 
-            return $links;
+            foreach ($jobCards as $jobCard) {
+                $links[] = $baseUrl . $jobCard->getAttribute('href');
+            }
+        }
+
+        return $links;
+    }
+
+    // {title: '', description: ''}
+    public function getListingData(): array
+    {
+        $links = $this->getListingLinks();
+
+        foreach ($links as $link) {
+
         }
     }
 }
