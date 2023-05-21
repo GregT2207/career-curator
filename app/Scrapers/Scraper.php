@@ -6,16 +6,18 @@ use Illuminate\Support\Facades\Http;
 
 abstract class Scraper
 {
+    public static $failedSiteCalls = 0;
+    public static $failedListingCalls = 0;
+
     protected $searchTerm;
     protected $searchUrl;
     protected $siteName;
+    protected $listingLinksQuery;
     protected $headers = [
         'User-Agent' => 'Career-Curator/v1.0',
         'Accept' => 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8',
         'Accept-Encoding' => 'gzip, deflate, br',
     ];
-    public static $failedSiteCalls = 0;
-    public static $failedListingCalls = 0;
 
     public function getDom($url): ?\DOMDocument
     {
@@ -30,6 +32,25 @@ abstract class Scraper
         } else {
             return null;
         }
+    }
+
+    public function getListingLinks(): array
+    {
+        $links = [];
+
+        $dom = $this->getDom($this->searchUrl);
+        if ($dom) {
+            $xPath = new \DOMXPath($dom);
+            $jobCards = $xPath->query($this->listingLinksQuery);
+
+            foreach ($jobCards as $jobCard) {
+                $links[] = $this->baseUrl . $jobCard->getAttribute('href');
+            }
+        } else {
+            self::$failedSiteCalls++;
+        }
+
+        return $links;
     }
 
     public function getListingData(): array
@@ -55,7 +76,6 @@ abstract class Scraper
         return $listingData;
     }
 
-    abstract public function getListingLinks(): array;
     abstract protected function getTitle($dom): string;
     abstract protected function getDescription($dom): string;
     abstract protected function getSalaryRange($dom): array;

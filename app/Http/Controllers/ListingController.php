@@ -3,11 +3,13 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use App\Models\Listing;
 use App\Http\Resources\ListingResource;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use App\Scrapers\Scraper;
 use App\Scrapers\ReedScraper;
+use App\Scrapers\IndeedScraper;
+use App\Scrapers\CWJobsScraper;
 
 class ListingController extends Controller
 {
@@ -16,14 +18,16 @@ class ListingController extends Controller
         $listings = [];
 
         $listingData = $this->getAllData($request->input('search_term'));
-        foreach ($listingData as $data) {
-            $listings[] = new Listing(
-                $data['site'],
-                $data['link'],
-                $data['title'],
-                $data['description'],
-                $data['salaryRange'],
-            );
+        if (count($listingData)) {
+            foreach ($listingData as $data) {
+                $listings[] = new Listing(
+                    $data['site'],
+                    $data['link'],
+                    $data['title'],
+                    $data['description'],
+                    $data['salaryRange'],
+                );
+            }
         }
 
         return ListingResource::collection($listings)->additional([
@@ -35,12 +39,20 @@ class ListingController extends Controller
     public function getAllData($searchTerm): array
     {
         $data = [];
+        $scraperClasses = [
+            ReedScraper::class,
+            // IndeedScraper::class,
+            CWJobsScraper::class,
+        ];
 
-        $reedScraper = new ReedScraper($searchTerm);
-        $data = array_merge($data, $reedScraper->getListingData());
+        foreach ($scraperClasses as $scraperClass) {
+            $scraper = new $scraperClass($searchTerm);
 
-        // $indeedScraper = new IndeedScraper($searchTerm);
-        // $data[] = array_merge($data, $indeedScraper->getListingData());
+            $newData = $scraper->getListingData();
+            if (count($newData)) {
+                $data = array_merge($data, $newData);
+            }
+        }
 
         return $data;
     }

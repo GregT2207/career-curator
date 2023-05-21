@@ -2,25 +2,25 @@
 
 namespace App\Scrapers;
 
-class ReedScraper extends Scraper
+class IndeedScraper extends Scraper
 {
-    protected $baseUrl = 'https://reed.co.uk';
+    protected $baseUrl = 'https://uk.indeed.com/';
 
     public function __construct($searchTerm)
     {
         $this->searchTerm = $searchTerm;
-        $this->searchUrl = "https://reed.co.uk/jobs/{$searchTerm}-jobs";
-        $this->siteName = 'Reed';
-        $this->listingLinksQuery = '//*[@data-qa="job-card-title"]';
+        $this->searchUrl = "https://uk.indeed.com/jobs?q={$searchTerm}";
+        $this->siteName = 'Indeed';
+        $this->listingLinksQuery = '//*[contains(concat(" ", normalize-space(@class), " "), " jcs-JobTitle ")]';
     }
 
     protected function getTitle($dom): string
     {
         $xPath = new \DOMXPath($dom);
-        $results = $xPath->query('//meta[@itemprop="title"]');
+        $results = $xPath->query('//*[contains(concat(" ", normalize-space(@class), " "), " jobsearch-JobInfoHeader-title ")]');
 
         if ($results->item(0)) {
-            $title = $results->item(0)->getAttribute('content');
+            $title = $results->item(0)->firstChild->getAttribute('content');
 
             if ($title) {
                 return $title;
@@ -33,7 +33,7 @@ class ReedScraper extends Scraper
     protected function getDescription($dom): string
     {
         $xPath = new \DOMXPath($dom);
-        $results = $xPath->query('//span[@itemprop="description"]');
+        $results = $xPath->query('//*[@id="jobDescriptionText"]');
 
         if ($results->item(0)) {
             $description = $results->item(0)->textContent;
@@ -49,14 +49,14 @@ class ReedScraper extends Scraper
     protected function getSalaryRange($dom): array
     {
         $xPath = new \DOMXPath($dom);
-        $results = $xPath->query('//span[@data-qa="salaryLbl"]');
+        $results = $xPath->query('//*[@id="salaryInfoAndJobType"]');
 
         $range = [];
         $start = 0;
         $end = 0;
 
         if ($results->item(0)) {
-            $text = $results->item(0)->textContent;
+            $text = $results->item(0)->firstChild->textContent;
 
             if ($text) {
                 $range = explode(' - ', $text);
