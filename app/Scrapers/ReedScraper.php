@@ -4,14 +4,16 @@ namespace App\Scrapers;
 
 class ReedScraper extends Scraper
 {
-    protected $baseUrl = 'https://reed.co.uk';
+    public $siteName = 'Reed';
+    public $baseUrl = 'https://reed.co.uk';
+    public $listingLinksQuery = '//*[@data-qa="job-card-title"]';
 
-    public function __construct($searchTerm)
+    public function __construct($searchTerm = null)
     {
-        $this->searchTerm = $searchTerm;
-        $this->searchUrl = "https://reed.co.uk/jobs/{$searchTerm}-jobs";
-        $this->siteName = 'Reed';
-        $this->listingLinksQuery = '//*[@data-qa="job-card-title"]';
+        if ($searchTerm) {
+            $this->searchTerm = $searchTerm;
+            $this->searchUrl = "https://reed.co.uk/jobs/{$searchTerm}-jobs";
+        }
     }
 
     protected function getTitle($dom): string
@@ -62,12 +64,12 @@ class ReedScraper extends Scraper
                 $range = explode(' - ', $text);
 
                 if (is_array($range)) {
-                    $start = preg_replace('/[^0-9]/', '', $range[0]);
-                    $end = preg_replace('/[^0-9]/', '', end($range));
+                    $start = preg_replace('/[^0-9.]+/', '', $range[0]);
+                    $end = preg_replace('/[^0-9.]+/', '', end($range));
                 }
             }
         }
 
-        return [intval($start), intval($end)];
+        return [floatval($start), floatval($end)];
     }
 }

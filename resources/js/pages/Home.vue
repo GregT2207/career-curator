@@ -6,7 +6,7 @@
 <template>
     <Header />
 
-    <div class="container mx-auto p-6">
+    <div class="container mx-auto py-6">
         <Listings />
     </div>
 </template>

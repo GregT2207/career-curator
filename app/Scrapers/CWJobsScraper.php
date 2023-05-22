@@ -70,13 +70,13 @@ class CWJobsScraper extends Scraper
                     $range = explode($separator, $text);
 
                     if (is_array($range)) {
-                        $start = preg_replace('/[^0-9]/', '', $range[0]);
-                        $end = preg_replace('/[^0-9]/', '', end($range));
+                        $start = preg_replace('/[^0-9.]+/', '', $range[0]);
+                        $end = preg_replace('/[^0-9.]+/', '', end($range));
                     }
                 }
             }
         }
 
-        return [intval($start), intval($end)];
+        return [floatval($start), floatval($end)];
     }
 }

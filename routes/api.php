@@ -15,4 +15,7 @@ use App\Http\Controllers\ListingController;
 |
 */
 
-Route::get('/listings', [ListingController::class, 'index']);
+Route::controller(ListingController::class)->group(function() {
+    Route::get('/listings/links', 'links');
+    Route::get('/listings', 'show');
+});

@@ -8,3 +8,8 @@ export interface Listing {
     level: string;
     travel: string;
 }
+
+export interface ListingLink {
+    site: string;
+    url: string;
+}

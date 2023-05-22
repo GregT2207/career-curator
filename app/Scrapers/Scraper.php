@@ -6,9 +6,15 @@ use Illuminate\Support\Facades\Http;
 
 abstract class Scraper
 {
-    public static $failedSiteCalls = 0;
-    public static $failedListingCalls = 0;
+    public static $failedSites = 0;
+    public static $failedListings = 0;
+    public static $children = [
+        'reed' => ReedScraper::class,
+        // 'indeed' => IndeedScraper::class,
+        'cwjobs' => CWJobsScraper::class,
+    ];
 
+    public $links;
     protected $searchTerm;
     protected $searchUrl;
     protected $siteName;
@@ -34,7 +40,7 @@ abstract class Scraper
         }
     }
 
-    public function getListingLinks(): array
+    public function setLinks(): void
     {
         $links = [];
 
@@ -44,21 +50,23 @@ abstract class Scraper
             $jobCards = $xPath->query($this->listingLinksQuery);
 
             foreach ($jobCards as $jobCard) {
-                $links[] = $this->baseUrl . $jobCard->getAttribute('href');
+                $links[] = [
+                    'site' => $this->siteName,
+                    'url' => $this->baseUrl . $jobCard->getAttribute('href'),
+                ];
             }
         } else {
-            self::$failedSiteCalls++;
+            self::$failedSites++;
         }
 
-        return $links;
+        $this->links = $links;
     }
 
     public function getListingData(): array
     {
         $listingData = [];
 
-        $links = $this->getListingLinks();
-        foreach ($links as $link) {
+        foreach ($this->links as $link) {
             $dom = $this->getDom($link);
             if ($dom) {
                 $listingData[] = [
@@ -69,7 +77,7 @@ abstract class Scraper
                     'salaryRange' => $this->getSalaryRange($dom)
                 ];
             } else {
-                self::$failedListingCalls++;
+                self::$failedListings++;
             }
         }
 
