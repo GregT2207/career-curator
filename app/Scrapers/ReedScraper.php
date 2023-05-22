@@ -38,7 +38,7 @@ class ReedScraper extends Scraper
         $results = $xPath->query('//span[@itemprop="description"]');
 
         if ($results->item(0)) {
-            $description = $results->item(0)->textContent;
+            $description = $dom->saveHTML($results->item(0));
 
             if ($description) {
                 return $description;

@@ -24,8 +24,6 @@
             state.links = response.data.data;
             state.failedSites = response.data.failedSites;
             getNextListings();
-
-            state.loaded = true;
         }).catch(error => {
             state.loaded = true;
         });
@@ -45,6 +43,7 @@
                 state.listings.push(response.data.data);
 
                 state.loadingMore = false;
+                state.loaded = true;
             }).catch(error => {
                 state.failedLinks++;
             });

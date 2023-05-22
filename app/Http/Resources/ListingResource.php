@@ -13,12 +13,19 @@ class ListingResource extends JsonResource
     {
         $salaryStart = Currency::formatRounded($this->salaryRange[0]);
         $salaryEnd = Currency::formatRounded($this->salaryRange[1]);
+        if ($this->description) {
+            $this->description = preg_replace('/<(?!\/?br\s*\/?)[^>]+>/i', '', $this->description);
+            $this->description = Str::limit($this->description, 500);
+            $this->description = Str::beforeLast($this->description, ' ') . '...';
+        } else {
+            $this->description = 'No description';
+        }
 
         return [
             'site' => $this->site,
             'link' => $this->link,
             'title' => $this->title ? $this->title : 'No title',
-            'description' => $this->description ? Str::beforeLast(Str::limit($this->description, 500), ' ') . '...' : 'No description',
+            'description' => $this->description,
             'salary' => $this->salary ? $this->salary : 'Salary not stated',
             'salaryRange' => $this->salary ? "{$salaryStart} - {$salaryEnd}" : 'Salary not stated',
             'level' => $this->level,

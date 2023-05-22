@@ -36,7 +36,7 @@ class IndeedScraper extends Scraper
         $results = $xPath->query('//*[@id="jobDescriptionText"]');
 
         if ($results->item(0)) {
-            $description = $results->item(0)->textContent;
+            $description = $dom->saveHTML($results->item(0));
 
             if ($description) {
                 return $description;
