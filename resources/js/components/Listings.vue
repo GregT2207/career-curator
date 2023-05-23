@@ -8,26 +8,37 @@
 
     var batchSize = 3;
 
-    const state = reactive({
+    var defaultReactiveValues = {
         loaded: false,
         loadingMore: false,
+        searched: false,
         links: [] as ListingLink[],
         listings: [] as Listing[],
         nextListingsIndex: 0,
         failedSites: 0,
         failedLinks: 0,
-    });
+    };
+    const state = reactive(defaultReactiveValues);
 
     onMounted(() => {
-        // get array of links for jobs
-        axios.get('/api/listings/links?search=php').then(response => {
-            state.links = response.data.data;
-            state.failedSites = response.data.failedSites;
+        const searchBox = <HTMLInputElement>document.querySelector('#searchBox');
+        if (searchBox) {
+            searchBox.addEventListener('search', () => {
+                Object.assign(state, defaultReactiveValues);
+                state.searched = true;
 
-            getNextBatch();
-        }).catch(error => {
-            state.loaded = true;
-        });
+                axios.get('/api/listings/links?search=' + searchBox.value).then(response => {
+                    state.links = response.data.data;
+                    state.failedSites = response.data.failedSites;
+
+                    for (let i = 0; i < 3; i++) {
+                        getNextBatch();
+                    }
+                }).catch(error => {
+                    state.loaded = true;
+                });
+            })
+        }
     });
 
     function getNextBatch() {
@@ -42,20 +53,24 @@
                 }
             }).then(response => {
                 state.listings.push(response.data.data);
-
-                state.loadingMore = false;
-                state.loaded = true;
             }).catch(error => {
                 state.failedLinks++;
+            }).finally(() => {
+                state.loaded = true;
+                state.loadingMore = false;
             });
         });
     }
 </script>
 
 <template>
-    <div v-if="state.loaded">
+    <div v-if="!state.searched">
+        <h4 class="flex justify-center w-full text-3xl font-semibold">Search for listings to begin</h4>
+    </div>
+
+    <div v-else-if="state.loaded">
         <div v-if="state.listings.length">
-            <div class="grid grid-cols-3 gap-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
                 <ListingCard
                     v-for="listing in state.listings"
                     :listing="listing"
@@ -74,7 +89,7 @@
         </div>
 
         <div v-else>
-            <h4>No listings found</h4>
+            <h4 class="flex justify-center w-full text-2xl">No listings found</h4>
         </div>
     </div>
 
