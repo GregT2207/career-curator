@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Listing;
+use App\Http\Requests\IndexLinksRequest;
+use App\Services\ListingService;
 use App\Http\Resources\ListingResource;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use App\Scrapers\Scraper;
@@ -13,21 +15,9 @@ use App\Scrapers\CWJobsScraper;
 
 class ListingController extends Controller
 {
-    public function links(Request $request): array
+    public function links(IndexLinksRequest $request, ListingService $service): array
     {
-        $links = [];
-
-        // get array of links from all sites
-        $linksSeparated = [];
-        foreach (Scraper::$children as $scraperClass) {
-            $scraper = new $scraperClass($request->input('search'));
-
-            $scraper->setLinks();
-            if (count($scraper->links)) {
-                $linksSeparated[] = $scraper->links;
-            }
-        }
-        dd($linksSeparated);
+        $links = $service->getLinks($request->validated(), true);
 
         return [
             'data' => $links,
@@ -60,32 +50,32 @@ class ListingController extends Controller
         return new ListingResource($listing);
     }
 
-    public function index(Request $request): AnonymousResourceCollection
-    {
-        $listings = [];
+    // public function index(Request $request): AnonymousResourceCollection
+    // {
+    //     $listings = [];
 
-        foreach ($request->links as $link) {
-            if (!array_key_exists($link->site, Scraper::$children)) {
-                abort(400, "Invalid site name \"$link->site\"");
-            }
+    //     foreach ($request->links as $link) {
+    //         if (!array_key_exists($link->site, Scraper::$children)) {
+    //             abort(400, "Invalid site name \"$link->site\"");
+    //         }
 
-            $scraper = new Scraper::$children[strtolower($link->site)]();
-            $scraper->links = [$request->url];
+    //         $scraper = new Scraper::$children[strtolower($link->site)]();
+    //         $scraper->links = [$request->url];
 
-            $listingData = $scraper->getListingData();
-            if ($listingData) {
-                $listing = new Listing(
-                    $data['site'],
-                    $data['link'],
-                    $data['title'],
-                    $data['description'],
-                    $data['salaryRange'],
-                );
-            }
-        }
+    //         $listingData = $scraper->getListingData();
+    //         if ($listingData) {
+    //             $listing = new Listing(
+    //                 $data['site'],
+    //                 $data['link'],
+    //                 $data['title'],
+    //                 $data['description'],
+    //                 $data['salaryRange'],
+    //             );
+    //         }
+    //     }
 
-        return ListingResource::collection($listings)->additional([
-            'failedLinks' => Scraper::$failedLinks,
-        ]);
-    }
+    //     return ListingResource::collection($listings)->additional([
+    //         'failedLinks' => Scraper::$failedLinks,
+    //     ]);
+    // }
 }
