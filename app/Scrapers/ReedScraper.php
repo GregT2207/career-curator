@@ -8,7 +8,7 @@ class ReedScraper extends Scraper
     public $baseUrl = 'https://reed.co.uk';
     public $listingLinksQuery = '//*[@data-qa="job-card-title"]';
 
-    public function __construct($searchTerm = null)
+    public function __construct(string $searchTerm = null)
     {
         if ($searchTerm) {
             $this->searchTerm = $searchTerm;
@@ -16,7 +16,7 @@ class ReedScraper extends Scraper
         }
     }
 
-    protected function getTitle($dom): string
+    protected function getTitle(\DOMDocument $dom): string
     {
         $xPath = new \DOMXPath($dom);
         $results = $xPath->query('//meta[@itemprop="title"]');
@@ -32,7 +32,7 @@ class ReedScraper extends Scraper
         return '';
     }
 
-    protected function getDescription($dom): string
+    protected function getDescription(\DOMDocument $dom): string
     {
         $xPath = new \DOMXPath($dom);
         $results = $xPath->query('//span[@itemprop="description"]');
@@ -48,7 +48,7 @@ class ReedScraper extends Scraper
         return '';
     }
 
-    protected function getSalaryRange($dom): array
+    protected function getSalaryRange(\DOMDocument $dom): array
     {
         $xPath = new \DOMXPath($dom);
         $results = $xPath->query('//span[@data-qa="salaryLbl"]');

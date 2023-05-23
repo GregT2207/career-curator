@@ -84,7 +84,7 @@ abstract class Scraper
         return $listingData;
     }
 
-    abstract protected function getTitle($dom): string;
-    abstract protected function getDescription($dom): string;
-    abstract protected function getSalaryRange($dom): array;
+    abstract protected function getTitle(\DOMDocument $dom): string;
+    abstract protected function getDescription(\DOMDocument $dom): string;
+    abstract protected function getSalaryRange(\DOMDocument $dom): array;
 }

@@ -6,7 +6,7 @@ class CWJobsScraper extends Scraper
 {
     protected $baseUrl = 'https://www.cwjobs.co.uk';
 
-    public function __construct($searchTerm)
+    public function __construct(string $searchTerm)
     {
         $this->searchTerm = $searchTerm;
         $this->searchUrl = "https://www.cwjobs.co.uk/jobs/{$searchTerm}";
@@ -14,7 +14,7 @@ class CWJobsScraper extends Scraper
         $this->listingLinksQuery = '//*[@data-at="job-item-title"]';
     }
 
-    protected function getTitle($dom): string
+    protected function getTitle(\DOMDocument $dom): string
     {
         $xPath = new \DOMXPath($dom);
         $results = $xPath->query('//*[contains(concat(" ", normalize-space(@class), " "), "row") and contains(concat(" ", normalize-space(@class), " "), "title")]');
@@ -30,7 +30,7 @@ class CWJobsScraper extends Scraper
         return '';
     }
 
-    protected function getDescription($dom): string
+    protected function getDescription(\DOMDocument $dom): string
     {
         $xPath = new \DOMXPath($dom);
         $results = $xPath->query('//*[contains(concat(" ", normalize-space(@class), " "), "job-description")]');
@@ -46,7 +46,7 @@ class CWJobsScraper extends Scraper
         return '';
     }
 
-    protected function getSalaryRange($dom): array
+    protected function getSalaryRange(\DOMDocument $dom): array
     {
         $xPath = new \DOMXPath($dom);
         $results = $xPath->query('//*[contains(concat(" ", normalize-space(@class), " "), "salary") and contains(concat(" ", normalize-space(@class), " "), "icon")]');

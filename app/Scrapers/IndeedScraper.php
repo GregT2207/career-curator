@@ -6,7 +6,7 @@ class IndeedScraper extends Scraper
 {
     protected $baseUrl = 'https://uk.indeed.com/';
 
-    public function __construct($searchTerm)
+    public function __construct(string $searchTerm)
     {
         $this->searchTerm = $searchTerm;
         $this->searchUrl = "https://uk.indeed.com/jobs?q={$searchTerm}";
@@ -14,7 +14,7 @@ class IndeedScraper extends Scraper
         $this->listingLinksQuery = '//*[contains(concat(" ", normalize-space(@class), " "), " jcs-JobTitle ")]';
     }
 
-    protected function getTitle($dom): string
+    protected function getTitle(\DOMDocument $dom): string
     {
         $xPath = new \DOMXPath($dom);
         $results = $xPath->query('//*[contains(concat(" ", normalize-space(@class), " "), " jobsearch-JobInfoHeader-title ")]');
@@ -30,7 +30,7 @@ class IndeedScraper extends Scraper
         return '';
     }
 
-    protected function getDescription($dom): string
+    protected function getDescription(\DOMDocument $dom): string
     {
         $xPath = new \DOMXPath($dom);
         $results = $xPath->query('//*[@id="jobDescriptionText"]');
@@ -46,7 +46,7 @@ class IndeedScraper extends Scraper
         return '';
     }
 
-    protected function getSalaryRange($dom): array
+    protected function getSalaryRange(\DOMDocument $dom): array
     {
         $xPath = new \DOMXPath($dom);
         $results = $xPath->query('//*[@id="salaryInfoAndJobType"]');

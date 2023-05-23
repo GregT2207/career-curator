@@ -17,15 +17,17 @@ class ListingController extends Controller
     {
         $links = [];
 
+        // get array of links from all sites
+        $linksSeparated = [];
         foreach (Scraper::$children as $scraperClass) {
             $scraper = new $scraperClass($request->input('search'));
 
             $scraper->setLinks();
             if (count($scraper->links)) {
-                $links = array_merge($links, $scraper->links);
-                // do the interpolating 0, 0, 0, 1, 1, 1, etc. thing lol here
+                $linksSeparated[] = $scraper->links;
             }
         }
+        dd($linksSeparated);
 
         return [
             'data' => $links,
