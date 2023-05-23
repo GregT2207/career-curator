@@ -62,12 +62,12 @@
                 />
             </div>
 
-            <div v-if="state.loadingMore" class="mt-6">
+            <div v-if="state.loadingMore" class="flex justify-center items-center mt-6 pt-12">
                 <LoadingSpinner />
             </div>
 
             <div v-else class="flex justify-center">
-                <button @click="getNextBatch()" class="w-full mx-auto mt-6 px-4 py-2 text-2xl bg-gray rounded-lg">
+                <button @click="getNextBatch()" class="w-full mx-auto mt-6 px-4 py-4 text-3xl bg-gray rounded-lg">
                     See more
                 </button>
             </div>

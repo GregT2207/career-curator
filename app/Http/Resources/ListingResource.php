@@ -13,10 +13,13 @@ class ListingResource extends JsonResource
     {
         $salaryStart = Currency::formatRounded($this->salaryRange[0]);
         $salaryEnd = Currency::formatRounded($this->salaryRange[1]);
+
         if ($this->description) {
-            $this->description = preg_replace('/<(?!\/?br\s*\/?)[^>]+>/i', '', $this->description);
-            $this->description = Str::limit($this->description, 500);
-            $this->description = Str::beforeLast($this->description, ' ') . '...';
+            // $this->description = preg_replace('/<(?!\/?br\s*\/?)[^>]+>/i', '', $this->description);
+            if (strlen($this->description) > 2000) {
+                $this->description = Str::limit($this->description, 2000);
+                $this->description = Str::beforeLast($this->description, ' ') . '...';
+            }
         } else {
             $this->description = 'No description';
         }
@@ -28,8 +31,10 @@ class ListingResource extends JsonResource
             'description' => $this->description,
             'salary' => $this->salary ? $this->salary : 'Salary not stated',
             'salaryRange' => $this->salary ? "{$salaryStart} - {$salaryEnd}" : 'Salary not stated',
-            'level' => $this->level,
-            'travel' => $this->travel,
+            // 'level' => $this->level,
+            'level' => 'Senior',
+            // 'travel' => $this->travel,
+            'travel' => 'Anywhere',
         ];
     }
 }
