@@ -9,13 +9,19 @@ class Arrays
     {
         $interspersedLinks = [];
 
-        $index = 0;
+        $longest = 0;
         foreach ($arrays as $array) {
-            foreach ($array as $link) {
-                $interspersedLinks[] = $link;
+            if (count($array) >= $longest) {
+                $longest = count($array);
             }
+        }
 
-            $index++;
+        for ($i = 0; $i < $longest; $i++) {
+            foreach ($arrays as $array) {
+                if (array_key_exists($i, $array)) {
+                    $interspersedLinks[] = $array[$i];
+                }
+            }
         }
 
         return $interspersedLinks;

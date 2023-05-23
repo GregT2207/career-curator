@@ -6,7 +6,7 @@ class CWJobsScraper extends Scraper
 {
     protected $baseUrl = 'https://www.cwjobs.co.uk';
 
-    public function __construct(string $searchTerm)
+    public function __construct(string $searchTerm = null)
     {
         $this->searchTerm = $searchTerm;
         $this->searchUrl = "https://www.cwjobs.co.uk/jobs/{$searchTerm}";
@@ -17,7 +17,7 @@ class CWJobsScraper extends Scraper
     protected function getTitle(\DOMDocument $dom): string
     {
         $xPath = new \DOMXPath($dom);
-        $results = $xPath->query('//*[contains(concat(" ", normalize-space(@class), " "), "row") and contains(concat(" ", normalize-space(@class), " "), "title")]');
+        $results = $xPath->query('//div[contains(concat(" ", normalize-space(@class), " "), " row title ")]/h1');
 
         if ($results->item(0)) {
             $title = $results->item(0)->firstChild->textContent;

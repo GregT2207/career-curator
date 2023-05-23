@@ -59,7 +59,7 @@ class ListingController extends Controller
     //             abort(400, "Invalid site name \"$link->site\"");
     //         }
 
-    //         $scraper = new Scraper::$children[strtolower($link->site)]();
+    //         $scraper = new Scraper::$children[$link->site]();
     //         $scraper->links = [$request->url];
 
     //         $listingData = $scraper->getListingData();

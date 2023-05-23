@@ -6,7 +6,7 @@ class IndeedScraper extends Scraper
 {
     protected $baseUrl = 'https://uk.indeed.com/';
 
-    public function __construct(string $searchTerm)
+    public function __construct(string $searchTerm = null)
     {
         $this->searchTerm = $searchTerm;
         $this->searchUrl = "https://uk.indeed.com/jobs?q={$searchTerm}";
