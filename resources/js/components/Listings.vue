@@ -6,7 +6,6 @@
     import LoadingSpinner from './utilities/LoadingSpinner.vue';
     import ListingCard from './ListingCard.vue';
 
-    // how many listings to fetch at one time
     var batchSize = 3;
 
     const state = reactive({
@@ -20,16 +19,18 @@
     });
 
     onMounted(() => {
+        // get array of links for jobs
         axios.get('/api/listings/links?search=php').then(response => {
             state.links = response.data.data;
             state.failedSites = response.data.failedSites;
-            getNextListings();
+
+            getNextBatch();
         }).catch(error => {
             state.loaded = true;
         });
     });
 
-    function getNextListings() {
+    function getNextBatch() {
         state.loadingMore = true;
 
         var nextLinks = state.links.splice(state.nextListingsIndex, batchSize);
@@ -53,14 +54,22 @@
 
 <template>
     <div v-if="state.loaded">
-        <div v-if="state.listings.length" :class="'grid-cols-' + batchSize" class="grid gap-6">
-            <ListingCard
-                v-for="listing in state.listings"
-                :listing="listing"
-            />
+        <div v-if="state.listings.length">
+            <div class="grid grid-cols-3 gap-6">
+                <ListingCard
+                    v-for="listing in state.listings"
+                    :listing="listing"
+                />
+            </div>
 
-            <div v-if="state.loadingMore">
+            <div v-if="state.loadingMore" class="mt-6">
                 <LoadingSpinner />
+            </div>
+
+            <div v-else class="flex justify-center">
+                <button @click="getNextBatch()" class="w-full mx-auto mt-6 px-4 py-2 text-2xl bg-gray rounded-lg">
+                    See more
+                </button>
             </div>
         </div>
 
