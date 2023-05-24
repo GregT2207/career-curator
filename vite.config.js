@@ -14,7 +14,6 @@ export default defineConfig({
             protocol: "wss",
             // if your DDEV project serves multiple hosts, update the "host" as required.
             host: `${process.env.DDEV_HOSTNAME}`,
-        }
-    }
-
+        },
+    },
 });
