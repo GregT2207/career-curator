@@ -59,7 +59,11 @@
             state.links = response.data.data;
             state.failedSites = response.data.failedSites;
 
-            getNextBatch();
+            if (state.links.length) {
+                getNextBatch();
+            } else {
+                state.loaded = true;
+            }
         }).catch(error => {
             state.loaded = true;
         });
