@@ -1,5 +1,5 @@
 <script setup lang="ts">
-    import { reactive, onMounted } from 'vue';
+    import { reactive, watch, onMounted } from 'vue';
     import { useRouter } from 'vue-router';
     import axios from 'axios';
     import { Listing } from '../types';
@@ -23,6 +23,14 @@
     const state = reactive({...initialState});
 
     onMounted(() => {
+        configureSearch();
+    });
+
+    watch(() => router.currentRoute.value, (to, from) => {
+        configureSearch();
+    });
+
+    function configureSearch() {
         const searchBox = <HTMLInputElement>document.querySelector('#searchBox');
         if (searchBox) {
             searchBox.addEventListener('search', () => {
@@ -33,9 +41,12 @@
             if (searchTerm) {
                 searchBox.value = searchTerm;
                 search(searchTerm);
+            } else {
+                searchBox.value = '';
+                Object.assign(state, initialState);
             }
         }
-    });
+    }
 
     function search(term) {
         Object.assign(state, initialState);
