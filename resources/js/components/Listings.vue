@@ -8,7 +8,7 @@
 
     var batchSize = 3;
 
-    var defaultReactiveValues = {
+    const initialState = {
         loaded: false,
         loadingMore: false,
         searched: false,
@@ -18,13 +18,13 @@
         failedSites: 0,
         failedLinks: 0,
     };
-    const state = reactive(defaultReactiveValues);
+    const state = reactive({...initialState});
 
     onMounted(() => {
         const searchBox = <HTMLInputElement>document.querySelector('#searchBox');
         if (searchBox) {
             searchBox.addEventListener('search', () => {
-                Object.assign(state, defaultReactiveValues);
+                Object.assign(state, initialState);
                 state.searched = true;
 
                 axios.get('/api/listings/links?search=' + searchBox.value).then(response => {
