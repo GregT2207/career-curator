@@ -24,8 +24,9 @@
         const searchBox = <HTMLInputElement>document.querySelector('#searchBox');
         if (searchBox) {
             searchBox.addEventListener('search', () => {
-                Object.assign(state, initialState);
                 state.searched = true;
+
+                Object.assign(state, initialState);
 
                 axios.get('/api/listings/links?search=' + searchBox.value).then(response => {
                     state.links = response.data.data;
@@ -70,7 +71,7 @@
 
     <div v-else-if="state.loaded">
         <div v-if="state.listings.length">
-            <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+            <div class="relative grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
                 <ListingCard
                     v-for="listing in state.listings"
                     :listing="listing"
@@ -82,7 +83,7 @@
             </div>
 
             <div v-else class="flex justify-center">
-                <button @click="getNextBatch()" class="w-full mx-auto mt-6 px-4 py-4 text-3xl bg-gray rounded-lg">
+                <button @click="getNextBatch()" class="w-full mx-auto mt-6 px-4 py-4 text-3xl bg-gray-700 rounded-lg">
                     See more
                 </button>
             </div>

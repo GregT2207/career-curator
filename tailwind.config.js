@@ -8,8 +8,17 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        primary: '#181b23',
-        gray: '#181b23',
+        gray: {
+          'gray-100': '#f1f1f2',
+          'gray-200': '#d7d8dc',
+          'gray-300': '#bdbfc4',
+          'gray-400': '#a4a6ad',
+          'gray-500': '#181b23',
+          'gray-600': '#16181e',
+          'gray-700': '#13151a',
+          'gray-800': '#101216',
+          'gray-900': '#0d0e12',
+        },
       }
     },
   },
