@@ -7,11 +7,11 @@
                 <path stroke-linecap="round" stroke-linejoin="round" d="M9 9V4.5M9 9H4.5M9 9L3.75 3.75M9 15v4.5M9 15H4.5M9 15l-5.25 5.25M15 9h4.5M15 9V4.5M15 9l5.25-5.25M15 15h4.5M15 15v4.5m0-4.5l5.25 5.25" />
             </svg>
 
-            <p class="text-2xl">Career Curator</p>
+            <p class="text-md md:text-2xl">Career Curator</p>
         </div>
 
         <div>
-            <div class="flex items-center w-[300px] h-[40px] text-black bg-white rounded-full">
+            <div class="flex items-center w-[40vw] max-w-[300px] h-[40px] text-black bg-white rounded-full">
                 <input type="search" id="searchBox" class="w-full h-full mx-4 bg-transparent outline-none appearance-none" placeholder="Find your perfect job...">
             </div>
         </div>

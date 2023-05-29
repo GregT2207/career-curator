@@ -65,7 +65,7 @@
 
 <template>
     <div v-if="!state.searched">
-        <h4 class="flex justify-center w-full text-3xl font-semibold">Search for listings to begin</h4>
+        <h4 class="flex justify-center w-full text-xl md:text-3xl font-semibold">Search for listings to begin</h4>
     </div>
 
     <div v-else-if="state.loaded">
