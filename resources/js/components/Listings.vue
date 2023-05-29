@@ -27,7 +27,10 @@
     });
 
     watch(() => router.currentRoute.value, (to, from) => {
-        configureSearch();
+        if (!to.query.search) {
+            Object.assign(state, initialState);
+            configureSearch();
+        }
     });
 
     function configureSearch() {
@@ -43,7 +46,6 @@
                 search(searchTerm);
             } else {
                 searchBox.value = '';
-                Object.assign(state, initialState);
             }
         }
     }
@@ -78,7 +80,7 @@
             }).catch(error => {
                 state.failedLinks++;
                 if (state.failedLinks < 10) {
-                    getNextBatch(1);
+                    // getNextBatch(1);
                 }
             }).finally(() => {
                 state.loaded = true;
@@ -95,7 +97,7 @@
 
     <div v-else-if="state.loaded">
         <div v-if="state.listings.length">
-            <div class="relative grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+            <div class="relative grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 transition-all">
                 <ListingCard
                     v-for="listing in state.listings"
                     :listing="listing"
