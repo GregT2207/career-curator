@@ -1,12 +1,15 @@
 <script setup lang="ts">
-    import axios from 'axios';
     import { reactive, onMounted } from 'vue';
+    import { useRouter } from 'vue-router';
+    import axios from 'axios';
     import { Listing } from '../types';
     import { ListingLink } from '../types';
     import LoadingSpinner from './utilities/LoadingSpinner.vue';
     import ListingCard from './ListingCard.vue';
 
-    var batchSize = 3;
+    var batchSize = 9;
+
+    const router = useRouter();
 
     const initialState = {
         loaded: false,
@@ -24,23 +27,31 @@
         const searchBox = <HTMLInputElement>document.querySelector('#searchBox');
         if (searchBox) {
             searchBox.addEventListener('search', () => {
-                state.searched = true;
+                search(searchBox.value);
+            });
 
-                Object.assign(state, initialState);
-
-                axios.get('/api/listings/links?search=' + searchBox.value).then(response => {
-                    state.links = response.data.data;
-                    state.failedSites = response.data.failedSites;
-
-                    for (let i = 0; i < 3; i++) {
-                        getNextBatch();
-                    }
-                }).catch(error => {
-                    state.loaded = true;
-                });
-            })
+            var searchTerm = router.currentRoute.value.query.search?.toString();
+            if (searchTerm) {
+                searchBox.value = searchTerm;
+                search(searchTerm);
+            }
         }
     });
+
+    function search(term) {
+        Object.assign(state, initialState);
+        state.searched = true;
+
+        router.push({ query: { search: term } });
+        axios.get('/api/listings/links?search=' + term).then(response => {
+            state.links = response.data.data;
+            state.failedSites = response.data.failedSites;
+
+            getNextBatch();
+        }).catch(error => {
+            state.loaded = true;
+        });
+    }
 
     function getNextBatch() {
         state.loadingMore = true;
