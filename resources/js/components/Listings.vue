@@ -17,7 +17,6 @@
         searched: false,
         links: [] as ListingLink[],
         listings: [] as Listing[],
-        nextListingsIndex: 0,
         failedSites: 0,
         failedLinks: 0,
     };
@@ -53,10 +52,10 @@
         });
     }
 
-    function getNextBatch() {
+    function getNextBatch(forcedBatchSize = 0) {
         state.loadingMore = true;
 
-        var nextLinks = state.links.splice(state.nextListingsIndex, batchSize);
+        var nextLinks = state.links.splice(0, forcedBatchSize ? forcedBatchSize : batchSize);
         nextLinks.forEach(link => {
             axios.get('/api/listings', {
                 params: {
@@ -67,6 +66,9 @@
                 state.listings.push(response.data.data);
             }).catch(error => {
                 state.failedLinks++;
+                if (state.failedLinks < 10) {
+                    getNextBatch(1);
+                }
             }).finally(() => {
                 state.loaded = true;
                 state.loadingMore = false;

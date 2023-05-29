@@ -27,8 +27,6 @@ class ListingController extends Controller
 
     public function show(Request $request): ListingResource
     {
-        $listing = [];
-
         if (!array_key_exists($request->site, Scraper::$children)) {
             abort(400, "Invalid site name \"$request->site\"");
         }
@@ -45,9 +43,11 @@ class ListingController extends Controller
                 $data[0]['description'],
                 $data[0]['salaryRange'],
             );
+
+            return new ListingResource($listing);
         }
 
-        return new ListingResource($listing);
+        abort(404, 'Listing not found.');
     }
 
     // public function index(Request $request): AnonymousResourceCollection
