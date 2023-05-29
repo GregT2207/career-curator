@@ -46,28 +46,19 @@ class IndeedScraper extends Scraper
         return '';
     }
 
-    protected function getSalaryRange(\DOMDocument $dom): array
+    protected function getSalary(\DOMDocument $dom): string
     {
         $xPath = new \DOMXPath($dom);
         $results = $xPath->query('//*[@id="salaryInfoAndJobType"]');
 
-        $range = [];
-        $start = 0;
-        $end = 0;
-
         if ($results->item(0)) {
-            $text = $results->item(0)->firstChild->textContent;
+            $text = $results->item(0)->textContent;
 
             if ($text) {
-                $range = explode(' - ', $text);
-
-                if (is_array($range)) {
-                    $start = preg_replace('/[^0-9.]+/', '', $range[0]);
-                    $end = preg_replace('/[^0-9.]+/', '', end($range));
-                }
+                return $text;
             }
         }
 
-        return [floatval($start), floatval($end)];
+        return '';
     }
 }

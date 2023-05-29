@@ -3,6 +3,7 @@
 namespace App\Scrapers;
 
 use Illuminate\Support\Facades\Http;
+use App\Utilities\Currency;
 
 abstract class Scraper
 {
@@ -74,7 +75,7 @@ abstract class Scraper
                     'link' => $link,
                     'title' => $this->getTitle($dom),
                     'description' => $this->getDescription($dom),
-                    'salaryRange' => $this->getSalaryRange($dom)
+                    'salaryRange' => $this->getSalaryRange($this->getSalary($dom)),
                 ];
             } else {
                 self::$failedListings++;
@@ -84,7 +85,20 @@ abstract class Scraper
         return $listingData;
     }
 
+    public function getSalaryRange($text): array
+    {
+        if ($text) {
+            $values = Currency::extractMoneyValues($text);
+
+            if (count($values) >= 2) {
+                return [$values[0], $values[1]];
+            }
+        }
+
+        return [0, 0];
+    }
+
     abstract protected function getTitle(\DOMDocument $dom): string;
     abstract protected function getDescription(\DOMDocument $dom): string;
-    abstract protected function getSalaryRange(\DOMDocument $dom): array;
+    abstract protected function getSalary(\DOMDocument $dom): string;
 }

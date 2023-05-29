@@ -17,7 +17,7 @@ class CWJobsScraper extends Scraper
     protected function getTitle(\DOMDocument $dom): string
     {
         $xPath = new \DOMXPath($dom);
-        $results = $xPath->query('//div[contains(concat(" ", normalize-space(@class), " "), " row title ")]/h1');
+        $results = $xPath->query('//div[contains(@class, "col-page-header")]//h1');
 
         if ($results->item(0)) {
             $title = $results->item(0)->firstChild->textContent;
@@ -46,37 +46,19 @@ class CWJobsScraper extends Scraper
         return '';
     }
 
-    protected function getSalaryRange(\DOMDocument $dom): array
+    protected function getSalary(\DOMDocument $dom): string
     {
         $xPath = new \DOMXPath($dom);
         $results = $xPath->query('//*[contains(concat(" ", normalize-space(@class), " "), "salary") and contains(concat(" ", normalize-space(@class), " "), "icon")]');
-
-        $range = [];
-        $start = 0;
-        $end = 0;
 
         if ($results->item(0)) {
             $text = $results->item(0)->textContent;
 
             if ($text) {
-                $separator = '';
-                if (str_contains($text, ' - ')) {
-                    $separator = ' - ';
-                } else if (str_contains($text, ' to ')) {
-                    $separator = ' to ';
-                }
-
-                if ($separator) {
-                    $range = explode($separator, $text);
-
-                    if (is_array($range)) {
-                        $start = preg_replace('/[^0-9.]+/', '', $range[0]);
-                        $end = preg_replace('/[^0-9.]+/', '', end($range));
-                    }
-                }
+                return $text;
             }
         }
 
-        return [floatval($start), floatval($end)];
+        return '';
     }
 }
