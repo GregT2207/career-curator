@@ -7,7 +7,7 @@
     import LoadingSpinner from './utilities/LoadingSpinner.vue';
     import ListingCard from './ListingCard.vue';
 
-    var batchSize = 9;
+    var batchSize = 12;
 
     const router = useRouter();
 
