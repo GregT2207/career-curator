@@ -53,7 +53,7 @@
             state.failedSites = response.data.failedSites;
 
             if (state.links.length) {
-                getNextBatch();
+                getBatch();
             } else {
                 state.loaded = true;
             }
@@ -62,27 +62,35 @@
         });
     }
 
-    function getNextBatch(forcedBatchSize = 0) {
+    function getBatch(forcedBatchSize = 0) {
         state.loadingMore = true;
+
+        var promises: Promise<Listing>[] = [];
 
         var nextLinks = state.links.splice(0, forcedBatchSize ? forcedBatchSize : batchSize);
         nextLinks.forEach(link => {
-            axios.get('/api/listings', {
-                params: {
-                    site: link.site.toLowerCase(),
-                    url: link.url,
-                }
-            }).then(response => {
-                state.listings.push(response.data.data);
-            }).catch(error => {
-                state.failedLinks++;
-                if (state.failedLinks < 10) {
-                    getNextBatch(1);
-                }
-            }).finally(() => {
-                state.loaded = true;
-                state.loadingMore = false;
-            });
+            promises.push(
+                axios.get('/api/listings', {
+                    params: {
+                        site: link.site.toLowerCase(),
+                        url: link.url,
+                    }
+                }).then(response => {
+                    return response.data.data;
+                }).catch(error => {
+                    state.failedLinks++;
+                    if (state.failedLinks < 10) {
+                        getBatch(1);
+                    }
+                })
+            );
+        });
+
+        Promise.all(promises).then(newListings => {
+            state.listings = state.listings.concat(newListings);
+
+            state.loaded = true;
+            state.loadingMore = false;
         });
     }
 </script>
@@ -106,7 +114,7 @@
             </div>
 
             <div v-else class="flex justify-center">
-                <button @click="getNextBatch()" class="w-full mx-auto mt-6 px-4 py-4 text-3xl bg-gray-700 rounded-lg">
+                <button @click="getBatch()" class="w-full mx-auto mt-6 px-4 py-4 text-3xl bg-gray-700 rounded-lg">
                     See more
                 </button>
             </div>
