@@ -25,15 +25,14 @@ class Listing
         $start = $this->salaryRange[0];
         $end = $this->salaryRange[1];
 
-        if ($start == 0) {
-            return 0;
+        if ($start && $end) {
+            return round(($start + $end) / 2);
         }
 
-        if ($end == 0) {
-            return $start;
-        }
+        if ($start) {return $start;}
+        if ($end) {return $end;}
 
-        return round(($start + $end) / 2);
+        return 0;
     }
 
     public function getLevel(): string
