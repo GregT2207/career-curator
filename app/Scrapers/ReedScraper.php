@@ -12,7 +12,7 @@ class ReedScraper extends Scraper
     {
         if ($searchTerm) {
             $this->searchTerm = $searchTerm;
-            $this->searchUrl = "https://reed.co.uk/jobs/{$searchTerm}-jobs";
+            $this->searchUrl = "https://reed.co.uk/jobs/{$searchTerm}-jobs?dateCreatedOffSet=lastweek";
         }
     }
 

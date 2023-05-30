@@ -9,7 +9,7 @@ class CWJobsScraper extends Scraper
     public function __construct(string $searchTerm = null)
     {
         $this->searchTerm = $searchTerm;
-        $this->searchUrl = "https://www.cwjobs.co.uk/jobs/{$searchTerm}";
+        $this->searchUrl = "https://www.cwjobs.co.uk/jobs/{$searchTerm}?action=facet_selected%3bage%3b7&postedWithin=7";
         $this->siteName = 'CWJobs';
         $this->listingLinksQuery = '//*[@data-at="job-item-title"]';
     }
