@@ -1,5 +1,5 @@
 <script setup lang="ts">
-    import { reactive, watch, onMounted } from 'vue';
+    import { reactive, onMounted } from 'vue';
     import { useRouter } from 'vue-router';
     import axios from 'axios';
     import { Listing } from '../types';
@@ -26,33 +26,26 @@
         configureSearch();
     });
 
-    watch(() => router.currentRoute.value, (to, from) => {
-        if (!to.query.search) {
-            Object.assign(state, initialState);
-            configureSearch();
-        }
-    });
-
     function configureSearch() {
-        const searchBox = <HTMLInputElement>document.querySelector('#searchBox');
-        if (searchBox) {
-            searchBox.addEventListener('search', () => {
-                search(searchBox.value);
-            });
+        var searchBox = <HTMLInputElement>document.querySelector('#searchBox');
+        searchBox.addEventListener('search', () => {
+            search(searchBox.value);
+        });
 
-            var searchTerm = router.currentRoute.value.query.search?.toString();
-            if (searchTerm) {
-                searchBox.value = searchTerm;
-                search(searchTerm);
-            } else {
-                searchBox.value = '';
-            }
+        var searchTerm = router.currentRoute.value.query.search?.toString();
+        if (searchTerm) {
+            searchBox.value = searchTerm;
+            search(searchTerm);
+        } else {
+            searchBox.value = '';
         }
     }
 
-    function search(term) {
-        Object.assign(state, initialState);
+    function search(term: string) {
+        state.loaded = false;
         state.searched = true;
+        state.links.splice(0);
+        state.listings.splice(0);
 
         router.push({ query: { search: term } });
         axios.get('/api/listings/links?search=' + term).then(response => {
@@ -84,7 +77,7 @@
             }).catch(error => {
                 state.failedLinks++;
                 if (state.failedLinks < 10) {
-                    // getNextBatch(1);
+                    getNextBatch(1);
                 }
             }).finally(() => {
                 state.loaded = true;
