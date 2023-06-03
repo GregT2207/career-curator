@@ -7,9 +7,9 @@ export interface Listing {
     salaryRange: string;
     level: string;
     travel: string;
-}
+};
 
 export interface ListingLink {
     site: string;
     url: string;
-}
+};
